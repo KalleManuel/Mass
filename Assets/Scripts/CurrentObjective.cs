@@ -25,6 +25,7 @@ public class CurrentObjective : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1;
         colorsInGame = GameObject.FindGameObjectWithTag("GameController").GetComponent<ColorsInGame>();
         playerMass = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMass>();
         setColorIndex = true;
@@ -49,6 +50,7 @@ public class CurrentObjective : MonoBehaviour
 
         if (playerMass.mass < 0.3f)
         {
+            playerMass.mass = 0.309f;
             GameOver();
         }
       
