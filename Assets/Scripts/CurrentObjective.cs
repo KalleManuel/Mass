@@ -9,9 +9,9 @@ public class CurrentObjective : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI objectiveText;
-    public enum Objective { Size, Color, Shape}
+    public enum Objective { ConsumeSmaller, ConsumeSameColor, ConsumeBigger, ConsumeOtherColor}
 
-    public Objective objective = Objective.Size;
+    public Objective objective = Objective.ConsumeSmaller;
 
     private float timer = 30;
 
@@ -58,22 +58,41 @@ public class CurrentObjective : MonoBehaviour
 
     private void ChangeObjective()
     {
-        if (objective == Objective.Size)
+        objective = (Objective)Random.Range(0, 4);
+        
+        if (objective == Objective.ConsumeSameColor)
         {
-            objective = Objective.Color;
+            
             colorIndex = Random.Range(0, colorsInGame.dotColor.Length - 1);
             GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>().color =
                 colorsInGame.dotColor[colorIndex];
-            objectiveText.text = "Consume color";
+            objectiveText.text = "Consume same color";
             objectiveText.color = colorsInGame.dotColor[colorIndex];
         }
-        else if (objective == Objective.Color)
+        else if (objective == Objective.ConsumeSmaller)
         {
-            objective = Objective.Size;
             GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>().color =
-                   colorsInGame.playerColor;
+                   colorsInGame.black;
             objectiveText.text = "Consume smaller";
-            objectiveText.color = colorsInGame.playerColor;
+            objectiveText.color = colorsInGame.black;
+        }
+
+        else if (objective == Objective.ConsumeBigger)
+        {
+            GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>().color =
+                   colorsInGame.white;
+            objectiveText.text = "Consume bigger";
+            objectiveText.color = colorsInGame.black;
+        }
+
+        else if (objective == Objective.ConsumeOtherColor)
+        {
+
+            colorIndex = Random.Range(0, colorsInGame.dotColor.Length - 1);
+            GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>().color =
+                colorsInGame.dotColor[colorIndex];
+            objectiveText.text = "Consume other color";
+            objectiveText.color = colorsInGame.dotColor[colorIndex];
         }
     }
 

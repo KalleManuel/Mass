@@ -13,6 +13,7 @@ public class ConsumeMass : MonoBehaviour
     private bool timeToDrop;
     private float dropTimer; 
     public float dropTime = 0.2f;
+    public float dropSafety = 2f;
    
     void Start()
     {
@@ -26,6 +27,17 @@ public class ConsumeMass : MonoBehaviour
     {
         if (timeToDrop)
         {
+            if (dropSafety > 0)
+            {
+                dropSafety-= Time.deltaTime;
+            }
+            else
+            {
+                timeToDrop = false;
+                dropTimer = dropTime;
+                dropSafety = 2;
+
+            }
              if (dropTimer > 0)
             {
                 dropTimer -= Time.deltaTime;
@@ -44,7 +56,7 @@ public class ConsumeMass : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (currentObjective.objective == CurrentObjective.Objective.Size)
+        if (currentObjective.objective == CurrentObjective.Objective.ConsumeSmaller)
         {
             collision.TryGetComponent<Mass>(out Mass dotMass);
             collision.TryGetComponent<DotColor>(out DotColor dotColor);
@@ -61,7 +73,23 @@ public class ConsumeMass : MonoBehaviour
             else timeToDrop = true;
         }
 
-        else if (currentObjective.objective == CurrentObjective.Objective.Color)
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeBigger)
+        {
+            collision.TryGetComponent<Mass>(out Mass dotMass);
+            collision.TryGetComponent<DotColor>(out DotColor dotColor);
+
+            if (playerMass.mass < dotMass.mass && dotColor.consumeble)
+            {
+                float newMass = playerMass.newMass + (dotMass.mass / 10);
+                playerMass.ChangeizeOnPlayerMass(newMass);
+                dotMass.consumed = true;
+                dotColor.consumeble = false;
+
+            }
+            else timeToDrop = true;
+        }
+
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeSameColor)
         {
             collision.TryGetComponent<DotColor>(out DotColor dotColor);
             collision.TryGetComponent<Mass>(out Mass dotMass);
@@ -75,12 +103,35 @@ public class ConsumeMass : MonoBehaviour
             }
             else timeToDrop = true;
         }
-        
+
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeOtherColor)
+        {
+            collision.TryGetComponent<DotColor>(out DotColor dotColor);
+            collision.TryGetComponent<Mass>(out Mass dotMass);
+
+            if (currentObjective.colorIndex != dotColor.colorIndex && dotColor.consumeble)
+            {
+                float newMass = playerMass.newMass + (dotMass.mass / 10);
+                playerMass.ChangeizeOnPlayerMass(newMass);
+                dotMass.consumed = true;
+                dotColor.consumeble = false;
+            }
+            else timeToDrop = true;
+        }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (currentObjective.objective == CurrentObjective.Objective.Size)
+
+        if (timeToDrop)
+        {
+            timeToDrop = false;
+            dropTimer = dropTime;
+
+        }
+        /*
+        if (currentObjective.objective == CurrentObjective.Objective.ConsumeSmaller)
         {
             collision.TryGetComponent<Mass>(out Mass dotMass);
             collision.TryGetComponent<DotColor>(out DotColor dotColor);
@@ -93,7 +144,20 @@ public class ConsumeMass : MonoBehaviour
             }
         }
 
-        else if (currentObjective.objective == CurrentObjective.Objective.Color)
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeBigger)
+        {
+            collision.TryGetComponent<Mass>(out Mass dotMass);
+            collision.TryGetComponent<DotColor>(out DotColor dotColor);
+
+            if (playerMass.mass > dotMass.mass && dotColor.consumeble)
+            {
+                timeToDrop = false;
+                dropTimer = dropTime;
+
+            }
+        }
+
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeSameColor)
         {
             collision.TryGetComponent<DotColor>(out DotColor dotColor);
             collision.TryGetComponent<Mass>(out Mass dotMass);
@@ -106,6 +170,20 @@ public class ConsumeMass : MonoBehaviour
             }
 
         }
+        else if (currentObjective.objective == CurrentObjective.Objective.ConsumeOtherColor)
+        {
+            collision.TryGetComponent<DotColor>(out DotColor dotColor);
+            collision.TryGetComponent<Mass>(out Mass dotMass);
+
+            if (currentObjective.colorIndex == dotColor.colorIndex && dotColor.consumeble)
+            {
+                timeToDrop = false;
+                dropTimer = dropTime;
+
+            }
+
+        }
+        */
 
     }
 }

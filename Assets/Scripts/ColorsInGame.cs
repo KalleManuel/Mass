@@ -5,6 +5,7 @@ using UnityEngine;
 public class ColorsInGame : MonoBehaviour
 {
     public Color [] dotColor;
-    public Color playerColor;
+    public Color black;
+    public Color white;
 
 }
